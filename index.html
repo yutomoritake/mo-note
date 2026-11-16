@@ -52,8 +52,9 @@ main{flex:1;padding:4px 16px calc(24px + env(safe-area-inset-bottom,0px))}
 .f textarea{resize:vertical;line-height:1.6}
 .f .row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px 10px}
 .f .row > div{min-width:0}
-/* iPhone の日付欄は既定の幅が広く、枠からはみ出すので見た目をリセットする */
-.f input[type=date]{-webkit-appearance:none;appearance:none;display:block;min-width:0;max-width:100%;min-height:46px;line-height:1.4}
+/* iPhone の日付欄は既定の幅が広く、枠からはみ出すので見た目をリセットし、外枠で切る */
+.datewrap{width:100%;overflow:hidden;border-radius:10px}
+.f input[type=date]{-webkit-appearance:none;appearance:none;display:block;width:100%;min-width:0;max-width:100%;min-height:46px;line-height:1.4;margin:0}
 .f input[type=date]::-webkit-date-and-time-value{text-align:left}
 @media (max-width:440px){ .f .row{grid-template-columns:minmax(0,1fr)} }
 .memo{min-height:200px}
@@ -114,6 +115,7 @@ pre.preview{white-space:pre-wrap;background:var(--surface2);border-radius:10px;p
 <script>
 "use strict";
 const KEY = 'mo-note-v1', DRAFT = 'mo-note-draft-v1';
+const APP_VERSION = '5';  // sw.js の VERSION と合わせる
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const today = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; };
@@ -150,14 +152,12 @@ function renderTalk(){
   $('#main').innerHTML = `
     ${it ? `<div class="editing">記録を編集しています<button class="btn small" id="cancelEdit">やめる</button></div>` : ''}
     <div class="card">
-      <div class="f"><label for="speaker">講演者</label><input id="speaker" list="spList" value="${esc(d.speaker)}" placeholder="例：川崎" autocomplete="off"><datalist id="spList">${speakers().map(s => `<option value="${esc(s)}">`).join('')}</datalist></div>
-      <div class="f"><label for="title">題目</label><input id="title" value="${esc(d.title)}" placeholder="講演のタイトル" autocomplete="off"></div>
-      <div class="f row">
-        <div><label for="event">研究会・学会</label><input id="event" list="evList" value="${esc(d.event)}" placeholder="例：光物性研究会" autocomplete="off"><datalist id="evList">${events().map(s => `<option value="${esc(s)}">`).join('')}</datalist></div>
-        <div><label for="date">日付</label><input id="date" type="date" value="${esc(d.date)}"></div>
-      </div>
-      ${it ? '' : '<div class="keep" style="margin:-8px 0 12px">研究会と日付は次の講演にも引き継ぎます。</div>'}
-      <div class="f"><label for="memo">メモ</label><textarea id="memo" class="memo" placeholder="・気になった点&#10;・質疑で出たこと">${esc(d.memo)}</textarea></div>
+      <div class="f"><label for="event">研究会・学会</label><input id="event" list="evList" value="${esc(d.event)}" placeholder="例：第1回 光をねじ曲げる会" autocomplete="off"><datalist id="evList">${events().map(s => `<option value="${esc(s)}">`).join('')}</datalist></div>
+      <div class="f"><label for="date">日付</label><div class="datewrap"><input id="date" type="date" value="${esc(d.date)}"></div>
+        ${it ? '' : '<div class="keep">研究会と日付は、次の講演にも引き継ぎます。</div>'}</div>
+      <div class="f"><label for="speaker">講演者</label><input id="speaker" list="spList" value="${esc(d.speaker)}" placeholder="例：マクスウェル先生" autocomplete="off"><datalist id="spList">${speakers().map(s => `<option value="${esc(s)}">`).join('')}</datalist></div>
+      <div class="f"><label for="title">題目</label><input id="title" value="${esc(d.title)}" placeholder="例：負の屈折率で雨をよける傘" autocomplete="off"></div>
+      <div class="f"><label for="memo">メモ</label><textarea id="memo" class="memo" placeholder="・スライド12枚目の分散関係が美しい&#10;・質疑で「それ、可視でもできますか？」">${esc(d.memo)}</textarea></div>
       <div class="f"><label for="urls">リンク（1行に1つ）</label><textarea id="urls" rows="2" placeholder="https://…" autocapitalize="off" autocorrect="off" spellcheck="false">${esc(d.urls)}</textarea></div>
       <div class="btns">${it ? '<button class="btn danger" id="del">削除</button>' : '<button class="btn" id="clear">消す</button>'}<button class="btn primary" id="saveTalk">${it ? '更新する' : '保存する'}</button></div>
     </div>`;
@@ -292,7 +292,8 @@ function renderList(){
     ${!db.items.length ? '<div class="empty">まだ記録はありません。<br>「講演」「論文」「思い付き」から書いてください。</div>' : ''}
     ${un.length ? `<div class="sec">未送信 ${un.length}件</div><ul class="list">${un.map(itemHtml).join('')}</ul>` : ''}
     ${sent.length ? `<div class="sec">送信済み ${sent.length}件</div><ul class="list">${sent.map(itemHtml).join('')}</ul>
-      <button class="btn small" id="clean" style="margin-top:6px">送信済みの記録を削除する</button>` : ''}`;
+      <button class="btn small" id="clean" style="margin-top:6px">送信済みの記録を削除する</button>` : ''}
+    <p class="hint" style="text-align:center;margin-top:24px">MO Note バージョン ${APP_VERSION}</p>`;
   $('#incSent').onchange = e => { includeSent = e.target.checked; renderList(); };
   $('#main').querySelectorAll('[data-edit]').forEach(b => b.onclick = () => openEdit(b.dataset.edit));
   $('#send').onclick = () => share(target);
@@ -317,7 +318,7 @@ async function share(items){
 }
 
 render();
-if ('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('sw.js').catch(() => {});
+if ('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('sw.js', { updateViaCache: 'none' }).then(r => r.update()).catch(() => {});
 </script>
 </body>
 </html>
