@@ -1,7 +1,7 @@
 {
   "name": "MO Note",
   "short_name": "MO Note",
-  "description": "講演メモと思い付きをオフラインで記録し、MO Spectrum に送るためのアプリ",
+  "description": "講演メモとアイデアをオフラインで記録し、MO Spectrum に送るためのアプリ",
   "lang": "ja",
   "start_url": "./",
   "scope": "./",
