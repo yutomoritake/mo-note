@@ -115,7 +115,7 @@ pre.preview{white-space:pre-wrap;background:var(--surface2);border-radius:10px;p
 <script>
 "use strict";
 const KEY = 'mo-note-v1', DRAFT = 'mo-note-draft-v1';
-const APP_VERSION = '6';  // sw.js の VERSION と合わせる
+const APP_VERSION = '7';  // sw.js の VERSION と合わせる
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const today = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; };
@@ -203,13 +203,14 @@ function renderPaper(){
         <div style="display:flex;gap:8px"><input id="purl" type="url" inputmode="url" value="${esc(d.url)}" placeholder="https://doi.org/…" autocapitalize="off" autocorrect="off" spellcheck="false" style="flex:1"><button class="btn small" id="paste" type="button">貼り付け</button></div>
         <div class="keep" id="purlHint">${d.url ? esc(urlShort(cleanUrl(d.url))) : 'Safari などで論文を開いて、共有 →「コピー」したURLを貼り付けてください。'}</div></div>
       <div class="f"><label for="pcomment">コメント</label><textarea id="pcomment" rows="5" placeholder="なぜ気になったか、どこが使えそうか">${esc(d.comment)}</textarea></div>
-      <div class="btns">${it ? '<button class="btn danger" id="del">削除</button>' : ''}<button class="btn primary" id="savePaper">${it ? '更新する' : '保存する'}</button></div>
+      <div class="btns">${it ? '<button class="btn danger" id="del">削除</button>' : '<button class="btn" id="clearPaper">消す</button>'}<button class="btn primary" id="savePaper">${it ? '更新する' : '保存する'}</button></div>
     </div>
     ${!it && recent.length ? `<div class="sec">最近の論文</div><ul class="list">${recent.map(itemHtml).join('')}</ul>` : ''}
     ${!it && !recent.length ? '<p class="hint">ここではURLとコメントだけ残します。タイトルや著者、プロジェクトとのつながりは、MO Spectrum（ノートPC）で整理してください。</p>' : ''}`;
   const read = () => ({ url: $('#purl').value.trim(), comment: $('#pcomment').value.replace(/\s+$/,'') });
   $('#main .card').addEventListener('input', () => { $('#purlHint').textContent = $('#purl').value.trim() ? urlShort(cleanUrl($('#purl').value)) : ''; if (!it){ draft.paper = read(); saveDraft(); } });
   $('#paste').onclick = async () => { try { const t = await navigator.clipboard.readText(); if (!t) return; $('#purl').value = cleanUrl(t); $('#purl').dispatchEvent(new Event('input', {bubbles:true})); } catch(e){ toast('貼り付けできませんでした。欄を長押しして「ペースト」してください'); } };
+  if ($('#clearPaper')) $('#clearPaper').onclick = () => { if (!$('#purl').value.trim() && !$('#pcomment').value.trim()) return; if (!confirm('書きかけの内容を消しますか？')) return; draft.paper = { url:'', comment:'' }; saveDraft(); renderPaper(); };
   $('#savePaper').onclick = () => {
     const v = read(); v.url = cleanUrl(v.url);
     if (!v.url && !v.comment){ toast('URLかコメントを書いてください'); return; }
@@ -231,11 +232,12 @@ function renderIdea(){
   $('#main').innerHTML = `
     ${it ? `<div class="editing">記録を編集しています<button class="btn small" id="cancelEdit">やめる</button></div>` : ''}
     <div class="idea-in"><textarea id="ideaText" placeholder="思い付いたことを書いて保存">${esc(it ? it.text : (draft.idea || ''))}</textarea></div>
-    <div class="btns" style="margin-top:10px">${it ? '<button class="btn danger" id="del">削除</button>' : ''}<button class="btn primary" id="saveIdea">${it ? '更新する' : '保存する'}</button></div>
+    <div class="btns" style="margin-top:10px">${it ? '<button class="btn danger" id="del">削除</button>' : '<button class="btn" id="clearIdea">消す</button>'}<button class="btn primary" id="saveIdea">${it ? '更新する' : '保存する'}</button></div>
     ${!it && recent.length ? `<div class="sec">最近の思い付き</div><ul class="list">${recent.map(itemHtml).join('')}</ul>` : ''}
     ${!it && !recent.length ? '<p class="hint">1行でも、数行でもかまいません。保存した思い付きは、MO Spectrum の登録タブ（整理待ち）に入ります。</p>' : ''}`;
   const ta = $('#ideaText');
   if (!it){ ta.addEventListener('input', () => { draft.idea = ta.value; saveDraft(); }); }
+  if ($('#clearIdea')) $('#clearIdea').onclick = () => { if (!ta.value.trim()) return; if (!confirm('書きかけの内容を消しますか？')) return; draft.idea = ''; saveDraft(); renderIdea(); };
   $('#saveIdea').onclick = () => {
     const text = ta.value.trim(); if (!text){ toast('内容を書いてください'); return; }
     if (it){ it.text = text; it.updated = new Date().toISOString(); it.sent = false; editId = null; save(); toast('更新しました（未送信に戻りました）'); setView('list'); return; }
