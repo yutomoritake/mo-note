@@ -106,7 +106,7 @@ pre.preview{white-space:pre-wrap;background:var(--surface2);border-radius:10px;p
       <button role="tab" data-v="talk" aria-selected="true">講演</button>
       <button role="tab" data-v="paper" aria-selected="false">論文</button>
       <button role="tab" data-v="idea" aria-selected="false">思い付き</button>
-      <button role="tab" data-v="list" aria-selected="false">記録<span class="badge" id="unsent" hidden></span></button>
+      <button role="tab" data-v="list" aria-selected="false">出力<span class="badge" id="unsent" hidden></span></button>
     </nav>
   </header>
   <main id="main"></main>
@@ -115,7 +115,7 @@ pre.preview{white-space:pre-wrap;background:var(--surface2);border-radius:10px;p
 <script>
 "use strict";
 const KEY = 'mo-note-v1', DRAFT = 'mo-note-draft-v1';
-const APP_VERSION = '5';  // sw.js の VERSION と合わせる
+const APP_VERSION = '6';  // sw.js の VERSION と合わせる
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const today = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; };
