@@ -1,5 +1,5 @@
 /* MO Note のオフライン用キャッシュ。ファイルを更新したら VERSION を上げる（index.html の APP_VERSION も） */
-const VERSION = 'mo-note-v7';
+const VERSION = 'mo-note-v8';
 const FILES = ['./', './index.html', './manifest.webmanifest', './icon-180.png', './icon-192.png', './icon-512.png'];
 self.addEventListener('install', e => {
   // ブラウザの一時保存を通さず、必ず最新のファイルを取りに行く
