@@ -105,7 +105,7 @@ pre.preview{white-space:pre-wrap;background:var(--surface2);border-radius:10px;p
     <nav class="seg" role="tablist" id="tabs">
       <button role="tab" data-v="talk" aria-selected="true">講演</button>
       <button role="tab" data-v="paper" aria-selected="false">論文</button>
-      <button role="tab" data-v="idea" aria-selected="false">思い付き</button>
+      <button role="tab" data-v="idea" aria-selected="false">アイデア</button>
       <button role="tab" data-v="list" aria-selected="false">出力<span class="badge" id="unsent" hidden></span></button>
     </nav>
   </header>
@@ -115,7 +115,7 @@ pre.preview{white-space:pre-wrap;background:var(--surface2);border-radius:10px;p
 <script>
 "use strict";
 const KEY = 'mo-note-v1', DRAFT = 'mo-note-draft-v1';
-const APP_VERSION = '7';  // sw.js の VERSION と合わせる
+const APP_VERSION = '8';  // sw.js の VERSION と合わせる
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const today = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; };
@@ -225,16 +225,16 @@ function renderPaper(){
   $('#main').querySelectorAll('[data-edit]').forEach(b => b.onclick = () => openEdit(b.dataset.edit));
 }
 
-/* ---------- 思い付き ---------- */
+/* ---------- アイデア ---------- */
 function renderIdea(){
   const it = editId ? db.items.find(i => i.id===editId && i.kind==='idea') : null;
   const recent = db.items.filter(i => i.kind==='idea').slice(-5).reverse();
   $('#main').innerHTML = `
     ${it ? `<div class="editing">記録を編集しています<button class="btn small" id="cancelEdit">やめる</button></div>` : ''}
-    <div class="idea-in"><textarea id="ideaText" placeholder="思い付いたことを書いて保存">${esc(it ? it.text : (draft.idea || ''))}</textarea></div>
+    <div class="idea-in"><textarea id="ideaText" placeholder="思い付いたアイデアを書いて保存">${esc(it ? it.text : (draft.idea || ''))}</textarea></div>
     <div class="btns" style="margin-top:10px">${it ? '<button class="btn danger" id="del">削除</button>' : '<button class="btn" id="clearIdea">消す</button>'}<button class="btn primary" id="saveIdea">${it ? '更新する' : '保存する'}</button></div>
-    ${!it && recent.length ? `<div class="sec">最近の思い付き</div><ul class="list">${recent.map(itemHtml).join('')}</ul>` : ''}
-    ${!it && !recent.length ? '<p class="hint">1行でも、数行でもかまいません。保存した思い付きは、MO Spectrum の登録タブ（整理待ち）に入ります。</p>' : ''}`;
+    ${!it && recent.length ? `<div class="sec">最近のアイデア</div><ul class="list">${recent.map(itemHtml).join('')}</ul>` : ''}
+    ${!it && !recent.length ? '<p class="hint">1行でも、数行でもかまいません。保存したアイデアは、MO Spectrum の登録タブ（整理待ち）に入ります。</p>' : ''}`;
   const ta = $('#ideaText');
   if (!it){ ta.addEventListener('input', () => { draft.idea = ta.value; saveDraft(); }); }
   if ($('#clearIdea')) $('#clearIdea').onclick = () => { if (!ta.value.trim()) return; if (!confirm('書きかけの内容を消しますか？')) return; draft.idea = ''; saveDraft(); renderIdea(); };
@@ -251,7 +251,7 @@ function renderIdea(){
 
 /* ---------- 記録と送信 ---------- */
 function itemHtml(i){
-  const K = { talk:['講演','var(--talk)'], paper:['論文','var(--paper)'], idea:['思い付き','var(--idea)'] }[i.kind];
+  const K = { talk:['講演','var(--talk)'], paper:['論文','var(--paper)'], idea:['アイデア','var(--idea)'] }[i.kind];
   const t = i.kind==='talk' ? (i.title || '（題目なし）') : i.kind==='paper' ? (i.url ? urlShort(i.url) : '（URLなし）') : i.text.split('\n')[0];
   const sub = i.kind==='talk' ? [i.speaker, i.event, i.date].filter(Boolean).join('・') : i.kind==='paper' ? ((i.comment||'').split('\n')[0] || (i.created||'').slice(0,10)) : (i.created||'').slice(0,10);
   return `<li class="item"><span class="dot" style="background:${K[1]}"></span><button class="open" data-edit="${i.id}"><span class="tx"><span class="t">${esc(t)}</span><span class="s">${esc(K[0] + '　')}${esc(sub)}</span></span></button><span class="st ${i.sent?'sent':'un'}">${i.sent?'送信済み':'未送信'}</span></li>`;
@@ -277,7 +277,7 @@ function buildExport(items){
     papers.forEach(i => { out.push(`URL：${i.url || '（URLなし）'}`); (i.comment||'').split('\n').forEach(l => out.push(/^\s*#/.test(l) || /^(URL|リンク|DOI)\s*[:：]/i.test(l.trim()) || /^(https?:\/\/\S+|10\.\d{4,}\/\S+)\s*$/.test(l.trim()) ? '　' + l : l)); out.push(''); });
   }
   const ideas = items.filter(i => i.kind==='idea');
-  if (ideas.length){ out.push('## 思い付き'); ideas.forEach(i => out.push('- ' + i.text.replace(/\n+/g, ' ／ '))); out.push(''); }
+  if (ideas.length){ out.push('## アイデア'); ideas.forEach(i => out.push('- ' + i.text.replace(/\n+/g, ' ／ '))); out.push(''); }
   return out.join('\n');
 }
 function renderList(){
@@ -286,12 +286,12 @@ function renderList(){
   const target = includeSent ? db.items : db.items.filter(i => !i.sent);
   $('#main').innerHTML = `
     <div class="sendbox">
-      <p>講演・論文・思い付きの記録を MO Spectrum（ノートPC）に送ります。共有メニューから、自分宛てのメールや OneDrive などを選んでください。</p>
+      <p>講演・論文・アイデアの記録を MO Spectrum（ノートPC）に送ります。共有メニューから、自分宛てのメールや OneDrive などを選んでください。</p>
       <div class="btns"><button class="btn primary" id="send" ${target.length?'':'disabled'}>MO Spectrumへ送る（${target.length}件）</button><button class="btn" id="copy" ${target.length?'':'disabled'}>コピー</button></div>
       <label class="opts"><input type="checkbox" id="incSent" ${includeSent?'checked':''}> 送信済みの記録も含める</label>
     </div>
     ${pendingSent ? `<div class="confirm"><p>送れましたか？ 送れていれば、${pendingSent.length}件を「送信済み」にします。</p><div class="btns"><button class="btn" id="notYet">まだ</button><button class="btn primary" id="markSent">送信済みにする</button></div></div>` : ''}
-    ${!db.items.length ? '<div class="empty">まだ記録はありません。<br>「講演」「論文」「思い付き」から書いてください。</div>' : ''}
+    ${!db.items.length ? '<div class="empty">まだ記録はありません。<br>「講演」「論文」「アイデア」から書いてください。</div>' : ''}
     ${un.length ? `<div class="sec">未送信 ${un.length}件</div><ul class="list">${un.map(itemHtml).join('')}</ul>` : ''}
     ${sent.length ? `<div class="sec">送信済み ${sent.length}件</div><ul class="list">${sent.map(itemHtml).join('')}</ul>
       <button class="btn small" id="clean" style="margin-top:6px">送信済みの記録を削除する</button>` : ''}
