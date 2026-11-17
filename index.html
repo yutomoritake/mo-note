@@ -38,10 +38,11 @@ header{position:sticky;top:0;z-index:10;background:var(--bg);padding:10px 16px 0
 .wordmark{font-size:19px;font-weight:800;background:linear-gradient(90deg,#7B3FE4 0%,#E0383B 35%,#F08C00 60%,#2FA84F 85%,#0BA5C4 100%);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;line-height:1}
 @media (prefers-color-scheme: dark){ .wordmark{background-image:linear-gradient(90deg,#A97BFF 0%,#FF5C5F 35%,#FFB02E 60%,#4FD17A 85%,#2CD3EE 100%)} }
 .offline{margin-left:auto;font-size:12px;color:var(--muted);border:1px solid var(--line-strong);border-radius:999px;padding:2px 10px}
-.seg{display:grid;grid-template-columns:repeat(4,1fr);background:var(--surface2);border-radius:10px;padding:3px;margin:12px 0 10px}
-.seg button{border:0;background:none;border-radius:8px;padding:8px 2px;font-size:15px;white-space:nowrap;font-weight:600;color:var(--muted)}
+.seg{display:grid;grid-template-columns:repeat(5,1fr);background:var(--surface2);border-radius:10px;padding:3px;margin:12px 0 10px}
+.seg button{border:0;background:none;border-radius:8px;padding:8px 0;font-size:14px;white-space:nowrap;font-weight:600;color:var(--muted)}
 .seg button[aria-selected="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.12)}
 .seg .badge[hidden]{display:none}
+.seg .badge.due{background:#E5474D}
 .seg .badge{display:inline-block;min-width:20px;padding:0 6px;margin-left:4px;border-radius:10px;background:#F08C1E;color:#fff;font-size:12px;line-height:20px}
 
 main{flex:1;padding:4px 16px calc(24px + env(safe-area-inset-bottom,0px))}
@@ -92,6 +93,34 @@ main{flex:1;padding:4px 16px calc(24px + env(safe-area-inset-bottom,0px))}
 .empty{border:1px dashed var(--line-strong);border-radius:12px;padding:24px;text-align:center;color:var(--muted);font-size:14px}
 pre.preview{white-space:pre-wrap;background:var(--surface2);border-radius:10px;padding:10px;font-size:12px;max-height:240px;overflow:auto;margin:10px 0 0}
 
+/* ToDo */
+.tadd{display:flex;flex-direction:column;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px}
+.tadd input[type=text]{width:100%;border:1px solid var(--line);border-radius:10px;background:var(--surface2);padding:10px 12px;font-size:16px}
+.tadd .row2{display:flex;gap:8px;align-items:center}
+.tadd .dchips{display:flex;gap:5px;flex-wrap:nowrap;flex:1;min-width:0}
+.tadd .dchips button{border:1px solid var(--line);background:var(--surface2);border-radius:999px;padding:5px 9px;font-size:13px;white-space:nowrap}
+.tadd .dchips button[aria-pressed="true"]{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.tadd .datewrap{flex:0 1 132px;min-width:110px;overflow:hidden;border-radius:10px}
+.tadd input[type=date]{-webkit-appearance:none;appearance:none;display:block;width:100%;min-width:0;border:1px solid var(--line);border-radius:10px;background:var(--surface2);padding:7px 10px;font-size:14px;min-height:36px}
+.tadd .btn.primary{flex:0 0 auto}
+.tlist{list-style:none;margin:0;padding:0}
+.titem{display:flex;gap:12px;align-items:flex-start;padding:11px 4px;border-bottom:1px solid var(--line)}
+.tcheck{flex-shrink:0;width:24px;height:24px;border-radius:50%;border:2px solid var(--line-strong);background:none;padding:0;margin-top:1px;display:grid;place-items:center}
+.titem.done .tcheck{background:#4CC463;border-color:#4CC463;color:#fff}
+.titem.done .tcheck::after{content:"✓";font-size:14px;line-height:1}
+.ttx{flex:1;min-width:0}
+.ttx .tt{font-size:16px;overflow-wrap:anywhere;cursor:pointer}
+.titem.done .tt{color:var(--muted);text-decoration:line-through}
+.ttx .td{font-size:12px;color:var(--muted);margin-top:2px}
+.ttx .td.over{color:#E5474D;font-weight:600}
+.ttx .td.tod{color:#F08C1E;font-weight:600}
+.tedit{display:flex;flex-direction:column;gap:8px;margin-top:6px}
+.tedit input[type=text]{width:100%;border:1px solid var(--line-strong);border-radius:8px;background:var(--surface2);padding:8px 10px;font-size:16px}
+.tedit .row2{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.tedit input[type=date]{-webkit-appearance:none;appearance:none;border:1px solid var(--line);border-radius:8px;background:var(--surface2);padding:6px 8px;font-size:14px;min-width:0;max-width:160px}
+.tsec{font-size:13px;color:var(--muted);margin:18px 2px 2px;display:flex;align-items:center;gap:8px;font-weight:600}
+.tsec.over{color:#E5474D}
+.tsec button{margin-left:auto;font-weight:400}
 #toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:10px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .2s;z-index:50;max-width:90%;text-align:center}
 #toast.show{opacity:1}
 @media (prefers-reduced-motion: reduce){ #toast{transition:none} }
@@ -107,6 +136,7 @@ pre.preview{white-space:pre-wrap;background:var(--surface2);border-radius:10px;p
       <button role="tab" data-v="paper" aria-selected="false">論文</button>
       <button role="tab" data-v="idea" aria-selected="false">アイデア</button>
       <button role="tab" data-v="list" aria-selected="false">出力<span class="badge" id="unsent" hidden></span></button>
+      <button role="tab" data-v="todo" aria-selected="false">ToDo<span class="badge due" id="todoBadge" hidden></span></button>
     </nav>
   </header>
   <main id="main"></main>
@@ -115,7 +145,7 @@ pre.preview{white-space:pre-wrap;background:var(--surface2);border-radius:10px;p
 <script>
 "use strict";
 const KEY = 'mo-note-v1', DRAFT = 'mo-note-draft-v1';
-const APP_VERSION = '9';  // sw.js の VERSION と合わせる
+const APP_VERSION = '10';  // sw.js の VERSION と合わせる
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const today = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; };
@@ -126,6 +156,7 @@ function toast(m){ const t = $('#toast'); t.textContent = m; t.classList.add('sh
 let db = { items: [], last: { event:'', date:'' } };
 try { const s = JSON.parse(localStorage.getItem(KEY)); if (s && Array.isArray(s.items)) db = s; } catch(e){}
 db.last ||= { event:'', date:'' };
+db.todos ||= [];   // ToDo は MO Spectrum には送らない、この iPhone だけのリスト
 function save(){ try { localStorage.setItem(KEY, JSON.stringify(db)); } catch(e){ toast('保存できませんでした。空き容量を確認してください'); } renderBadge(); }
 if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(() => {});
 
@@ -138,8 +169,11 @@ let view = 'talk', editId = null, includeSent = false, pendingSent = null;
 /* ---------- 画面切り替え ---------- */
 $('#tabs').addEventListener('click', e => { const b = e.target.closest('[data-v]'); if (b) setView(b.dataset.v); });
 function setView(v){ view = v; document.querySelectorAll('#tabs [data-v]').forEach(b => b.setAttribute('aria-selected', b.dataset.v===v)); render(); window.scrollTo(0,0); }
-function render(){ ({talk:renderTalk, paper:renderPaper, idea:renderIdea, list:renderList})[view](); renderBadge(); }
-function renderBadge(){ const n = db.items.filter(i => !i.sent).length; const b = $('#unsent'); b.hidden = !n; b.textContent = n; }
+function render(){ ({talk:renderTalk, paper:renderPaper, idea:renderIdea, list:renderList, todo:renderTodo})[view](); renderBadge(); }
+function renderBadge(){
+  const n = db.items.filter(i => !i.sent).length; const b = $('#unsent'); b.hidden = !n; b.textContent = n;
+  const d = db.todos.filter(t => !t.done && t.due && t.due <= today()).length; const tb = $('#todoBadge'); tb.hidden = !d; tb.textContent = d;
+}
 function updateNet(){ $('#net').hidden = navigator.onLine; }
 addEventListener('online', updateNet); addEventListener('offline', updateNet); updateNet();
 
@@ -247,6 +281,53 @@ function renderIdea(){
   if ($('#del')) $('#del').onclick = () => removeItem(it);
   if ($('#cancelEdit')) $('#cancelEdit').onclick = () => { editId = null; setView('list'); };
   $('#main').querySelectorAll('[data-edit]').forEach(b => b.onclick = () => openEdit(b.dataset.edit));
+}
+
+/* ---------- ToDo（MO Spectrum には送らない） ---------- */
+let todoEdit = null, showDone = false, newDue = '';
+const addDays = n => { const d = new Date(); d.setDate(d.getDate() + n); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; };
+function dueLabel(d){
+  if (!d) return ''; const t = today();
+  if (d < t){ const n = Math.round((new Date(t) - new Date(d)) / 86400000); return `${n}日過ぎています（${d.slice(5).replace('-','/')}）`; }
+  if (d === t) return '今日まで'; if (d === addDays(1)) return '明日まで';
+  const wd = '日月火水木金土'[new Date(d).getDay()]; return `${d.slice(5).replace('-','/')}（${wd}）まで`;
+}
+function renderTodo(){
+  const t = today(), open = db.todos.filter(x => !x.done), done = db.todos.filter(x => x.done).sort((a,b) => (b.doneAt||'').localeCompare(a.doneAt||''));
+  const over = open.filter(x => x.due && x.due < t), tod = open.filter(x => x.due === t), later = open.filter(x => x.due && x.due > t).sort((a,b) => a.due.localeCompare(b.due)), none = open.filter(x => !x.due);
+  const item = x => {
+    const cls = x.due && x.due < t && !x.done ? 'over' : x.due === t && !x.done ? 'tod' : '';
+    return `<li class="titem ${x.done?'done':''}" data-tid="${x.id}"><button class="tcheck" data-check="${x.id}" aria-label="${x.done?'未完了に戻す':'完了にする'}"></button>
+      <div class="ttx">${todoEdit === x.id ? `<div class="tedit"><input type="text" id="teText" value="${esc(x.text)}" aria-label="内容"><div class="row2"><input type="date" id="teDue" value="${esc(x.due||'')}" aria-label="期限"><button class="btn small" id="teClear" type="button">期限なし</button><button class="btn small danger" id="teDel" type="button">削除</button><button class="btn small primary" id="teSave" type="button" style="margin-left:auto">保存</button></div></div>`
+        : `<div class="tt" data-edit-todo="${x.id}">${esc(x.text)}</div>${x.due ? `<div class="td ${cls}">${esc(x.done ? `期限 ${x.due.slice(5).replace('-','/')}` : dueLabel(x.due))}</div>` : ''}`}</div></li>`;
+  };
+  const sec = (label, list, cls='') => list.length ? `<div class="tsec ${cls}">${label}　${list.length}</div><ul class="tlist">${list.map(item).join('')}</ul>` : '';
+  $('#main').innerHTML = `
+    <form class="tadd" id="tAdd" autocomplete="off">
+      <input type="text" id="tText" placeholder="例：プリズムに虹の出し方を教わる" aria-label="やること" enterkeyhint="done">
+      <div class="row2"><div class="dchips" role="group" aria-label="期限">${[['','期限なし'],[t,'今日'],[addDays(1),'明日']].map(([v,l]) => `<button type="button" data-due="${v}" aria-pressed="${newDue===v}">${l}</button>`).join('')}</div>
+        <div class="datewrap"><input type="date" id="tDue" value="${esc(newDue)}" aria-label="期限の日付"></div></div>
+      <button class="btn primary" type="submit">追加する</button>
+    </form>
+    ${sec('期限切れ', over, 'over')}${sec('今日', tod)}${sec('これから', later)}${sec('期限なし', none)}
+    ${!open.length ? `<div class="empty" style="margin-top:14px">${done.length ? 'すべて完了しました。おつかれさまです。' : 'やることはまだありません。'}</div>` : ''}
+    ${done.length ? `<div class="tsec"><button class="btn small" id="tToggleDone" type="button" style="margin-left:0">${showDone ? '完了済みを隠す' : `完了済み ${done.length}件を表示`}</button>${showDone ? '<button class="btn small" id="tClearDone" type="button">完了済みを削除</button>' : ''}</div>${showDone ? `<ul class="tlist">${done.map(item).join('')}</ul>` : ''}` : ''}
+    <p class="hint" style="margin-top:20px">ToDo はこの iPhone の中だけのリストで、MO Spectrum には送られません。通知は出ないので、期限の近いものは「ToDo」タブの赤い数字で確認してください。</p>`;
+  const m = $('#main');
+  m.querySelectorAll('.dchips [data-due]').forEach(b => b.onclick = () => { newDue = b.dataset.due; $('#tDue').value = newDue; m.querySelectorAll('.dchips [data-due]').forEach(x => x.setAttribute('aria-pressed', x.dataset.due === newDue)); $('#tText').focus(); });
+  $('#tDue').onchange = e => { newDue = e.target.value; m.querySelectorAll('.dchips [data-due]').forEach(x => x.setAttribute('aria-pressed', x.dataset.due === newDue)); };
+  $('#tAdd').onsubmit = e => { e.preventDefault(); const v = $('#tText').value.trim(); if (!v) return; db.todos.push({ id: uid(), text: v, due: newDue, done: false, created: new Date().toISOString() }); save(); renderTodo(); $('#tText').focus(); };
+  m.querySelectorAll('[data-check]').forEach(b => b.onclick = () => { const x = db.todos.find(y => y.id === b.dataset.check); x.done = !x.done; x.doneAt = x.done ? new Date().toISOString() : ''; save(); renderTodo(); if (x.done) toast('完了にしました'); });
+  m.querySelectorAll('[data-edit-todo]').forEach(el => el.onclick = () => { todoEdit = el.dataset.editTodo; renderTodo(); $('#teText')?.focus(); });
+  if ($('#teSave')){
+    const x = db.todos.find(y => y.id === todoEdit);
+    $('#teSave').onclick = () => { const v = $('#teText').value.trim(); if (!v) return; x.text = v; x.due = $('#teDue').value; todoEdit = null; save(); renderTodo(); };
+    $('#teClear').onclick = () => { $('#teDue').value = ''; };
+    $('#teDel').onclick = () => { if (!confirm('このToDoを削除しますか？')) return; db.todos = db.todos.filter(y => y !== x); todoEdit = null; save(); renderTodo(); };
+    $('#teText').onkeydown = e => { if (e.key === 'Enter' && !e.isComposing){ e.preventDefault(); $('#teSave').click(); } if (e.key === 'Escape'){ todoEdit = null; renderTodo(); } };
+  }
+  if ($('#tToggleDone')) $('#tToggleDone').onclick = () => { showDone = !showDone; renderTodo(); };
+  if ($('#tClearDone')) $('#tClearDone').onclick = () => { if (!confirm(`完了済みの ${done.length}件を削除しますか？`)) return; db.todos = db.todos.filter(y => !y.done); save(); renderTodo(); };
 }
 
 /* ---------- 記録と送信 ---------- */
